@@ -198,3 +198,36 @@ def starte_gui():
     aktualisiere_tabelle()
     root.mainloop()
 
+# Eine Note aus der Datenbank löschen
+
+def loesche_note():
+    ausgewaehlt = tabelle.selection()
+    if not ausgewaehlt:
+        messagebox.showwarning("Keine Auswahl", "Bitte eine Note auswählen.")
+        return
+
+    daten = tabelle.item(ausgewaehlt)["values"]
+    eintrag = lade_noten()[tabelle.index(ausgewaehlt[0])][-4:]
+
+    if messagebox.askyesno("Löschen", "Diese Note wirklich löschen?"):
+        conn = verbinde_db()
+        cur = conn.cursor()
+
+        try:
+            cur.execute("SET FOREIGN_KEY_CHECKS = 0;")
+            cur.execute("""
+                DELETE FROM noten 
+                WHERE schuelerID = ? AND fachID = ? AND notentypID = ? AND datum = ?
+            """, tuple(eintrag))
+            cur.execute("SET FOREIGN_KEY_CHECKS = 1;")
+            conn.commit()
+        except Exception as e:
+            conn.rollback()
+            messagebox.showerror("Fehler beim Löschen", str(e))
+        finally:
+            conn.close()
+            aktualisiere_tabelle()
+
+
+
+ 
