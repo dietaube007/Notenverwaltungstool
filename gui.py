@@ -256,4 +256,3 @@ def aktualisiere_tabelle():
         tabelle.insert("", "end", values=zeile_liste[:11] + [status], tags=(tag,))
 
 
- 
