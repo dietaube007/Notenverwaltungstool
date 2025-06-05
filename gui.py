@@ -55,4 +55,49 @@ def zeige_login():
     widgets.extend([l2, pw_entry])
 
 
-    
+    # Funktion zum Einloggen des Lehrers
+    def versuche_login():
+        email = email_entry.get().strip()
+        pw = pw_entry.get().strip()
+        if auth.login(email, pw):
+            login_win.destroy()
+            starte_gui()
+        else:
+            messagebox.showerror("Login fehlgeschlagen", "❌ E-Mail oder Passwort ist ungültig.")
+
+    # Login-Button
+    login_btn = tk.Button(login_win, text="🔐 Login", font=("Segoe UI", 16, "bold"),
+                          width=16, command=versuche_login,
+                          bg=colors["light"]["highlight"], fg=colors["light"]["highlight_fg"])
+    login_btn.pack(pady=40)
+    widgets.append(login_btn)
+
+    # Darkmode-Umschalter
+    toggle_btn = tk.Button(login_win, textvariable=toggle_text,
+                           command=lambda: toggle_darkmode(login_win, widgets, toggle_text),
+                           font=("Segoe UI", 12))
+    toggle_btn.place(relx=1.0, rely=0.0, anchor="ne", x=-10, y=10)
+    widgets.append(toggle_btn)
+
+    # Bild anzeigen (z. B. Panda)
+    try:
+        panda_img = Image.open("panda.png").resize((180, 240), Image.LANCZOS)
+        panda_tk = ImageTk.PhotoImage(panda_img)
+        panda_label = tk.Label(login_win, image=panda_tk, bg=colors["light"]["panda_bg"])
+        panda_label.image = panda_tk
+        panda_label.place(x=login_win.winfo_width() - 200, y=login_win.winfo_height() - 260)
+
+        def repositioniere_panda(event=None):
+            panda_label.place(x=login_win.winfo_width() - panda_label.winfo_width() - 20,
+                              y=login_win.winfo_height() - panda_label.winfo_height() - 20)
+
+        login_win.bind("<Configure>", repositioniere_panda)
+        widgets.append(panda_label)
+    except Exception as e:
+        print("Panda-Bild konnte nicht geladen werden:", e)
+
+    # Theme anwenden und starten
+    apply_theme(login_win, widgets)
+    login_win.mainloop()
+
+
