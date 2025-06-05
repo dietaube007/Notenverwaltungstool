@@ -65,3 +65,57 @@ def note_hinzufuegen(sid, fid, tid, datum, nwid):
     finally:
         conn.close()
 
+# Dialogfenster zum Hinzufügen einer neuen Note
+def noten_hinzufuegen_dialog(root, aktualisiere_tabelle, apply_theme):
+    win = tk.Toplevel(root)
+    win.title("➕ Neue Note eintragen")
+    win.geometry("500x500")
+    widgets = []
+
+    # Klassen des Lehrers abrufen
+    klassen_raw = get_klassen_fuer_lehrer()
+    if not klassen_raw:
+        messagebox.showwarning("Keine Klassen", "Für diesen Lehrer sind keine Klassen zugewiesen.")
+        win.destroy()
+        return
+
+    # Initialisierung der benötigten Variablen und Mappings
+    klassen_map = {name: kid for name, kid in klassen_raw}
+    vars = {"klasse": tk.StringVar(), "schueler": tk.StringVar(), "fach": tk.StringVar(),
+            "notentyp": tk.StringVar(), "notenwert": tk.StringVar()}
+    schueler_map, fach_map = {}, {}
+    typ_map = {name: tid for tid, name in lade_notentypen()}
+    wert_map = {str(wert): wid for wid, wert in lade_notenwerte()}
+
+    # Funktion zur Erstellung eines Feldes mit Label und Combobox
+    def feld(lbl, var, values, row):
+        label = tk.Label(win, text=lbl, font=("Segoe UI", 12))
+        combo = ttk.Combobox(win, textvariable=var, values=values,
+                             font=("Segoe UI", 12), width=30, state="readonly",
+                             style="Custom.TCombobox")
+        label.grid(row=row, column=0, padx=10, pady=5, sticky="e")
+        combo.grid(row=row, column=1, pady=5)
+        widgets.extend([label, combo])
+        return combo
+
+    # Erzeugen der Formularfelder
+    klasse_combo = feld("Klasse:", vars["klasse"], list(klassen_map.keys()), 0)
+    schueler_combo = feld("Schüler:", vars["schueler"], [], 1)
+    fach_combo = feld("Fach:", vars["fach"], [], 2)
+    feld("Notenart:", vars["notentyp"], list(typ_map.keys()), 3)
+    feld("Note (1–6):", vars["notenwert"], list(wert_map.keys()), 4)
+
+    # Datumsauswahlfeld mit Einschränkung auf heutiges oder vergangenes Datum
+    datum_label = tk.Label(win, text="Datum:", font=("Segoe UI", 12))
+    datum_entry = DateEntry(
+        win,
+        font=("Segoe UI", 12),
+        date_pattern="yyyy-mm-dd",
+        state="readonly",
+        style="Custom.DateEntry",
+        maxdate=datetime.date.today()
+    )
+    datum_label.grid(row=5, column=0, padx=10, pady=5, sticky="e")
+    datum_entry.grid(row=5, column=1, pady=5)
+    widgets.extend([datum_label, datum_entry])
+
