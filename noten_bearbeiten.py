@@ -58,4 +58,44 @@ def note_bearbeiten(tabelle, root, aktualisiere_tabelle, apply_theme):
     typ_combo.pack(side=tk.LEFT)
     widgets.extend([frame1, typ_combo])
 
+    # Notenwert-Dropdown (1 bis 6)
+    frame2 = tk.Frame(win)
+    frame2.pack(pady=5)
+    tk.Label(frame2, text="Note (1–6):", font=("Segoe UI", 12)).pack(side=tk.LEFT, padx=5)
+    wert_var = tk.StringVar(value=str(notenwert_alt))
+    wert_combo = ttk.Combobox(
+        frame2, textvariable=wert_var,
+        values=list(wert_map.keys()),
+        font=("Segoe UI", 12),
+        state="readonly", style="Custom.TCombobox"
+    )
+    wert_combo.pack(side=tk.LEFT)
+    widgets.extend([frame2, wert_combo])
+
+    # Datumsauswahl
+    frame3 = tk.Frame(win)
+    frame3.pack(pady=5)
+    tk.Label(frame3, text="Datum:", font=("Segoe UI", 12)).pack(side=tk.LEFT, padx=5)
+
+    datum_entry = DateEntry(
+        frame3,
+        font=("Segoe UI", 12),
+        date_pattern="dd.mm.yyyy",
+        state="readonly",
+        style="Custom.DateEntry",
+        maxdate=date.today()  # Keine Zukunftsdaten erlaubt
+    )
+
+    # Sicherstellen, dass das Datum korrekt geparst wird (z. B. von '2025-06-04' zu datetime.date)
+    try:
+        datum_alt_obj = datetime.strptime(str(datum_alt), "%Y-%m-%d").date()
+        datum_entry.set_date(datum_alt_obj)
+    except Exception:
+        messagebox.showerror("Fehler", f"Ungültiges Datum: {datum_alt}")
+        win.destroy()
+        return
+
+    datum_entry.pack(side=tk.LEFT)
+    widgets.extend([frame3, datum_entry])
+
     
