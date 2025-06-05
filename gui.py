@@ -160,4 +160,41 @@ def starte_gui():
     widgets.append(toggle_btn)
 
 
-    
+   # Noten-Tabelle
+    spalten = ("Schüler", "Geschlecht", "Ort", "Postleitzahl", "Klasse", "Eintrittsjahr",
+               "Fach", "Note", "Notenart", "Datum", "Lehrer", "Status")
+    tabelle = ttk.Treeview(root, columns=spalten, show="headings")
+    for spalte in spalten:
+        tabelle.heading(spalte, text=spalte)
+        tabelle.column(spalte, anchor="center", width=120)
+    tabelle.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+    widgets.append(tabelle)
+
+    # Scrollbar
+    scrollbar = ttk.Scrollbar(root, orient="horizontal", command=tabelle.xview)
+    tabelle.configure(xscrollcommand=scrollbar.set)
+    scrollbar.pack(fill="x", side="bottom")
+
+    # Panda-Bild im Dashboard
+    try:
+        panda_img = Image.open("panda.png").resize((180, 240), Image.LANCZOS)
+        panda_tk = ImageTk.PhotoImage(panda_img)
+        panda_label = tk.Label(root, image=panda_tk, bg=colors["light"]["panda_bg"])
+        panda_label.image = panda_tk
+        panda_label.place(x=0, y=0)
+
+        def repositioniere_panda(event=None):
+            w = root.winfo_width()
+            h = root.winfo_height()
+            panda_label.place(x=w - panda_label.winfo_width() - 20,
+                              y=h - panda_label.winfo_height() - 20)
+
+        root.bind("<Configure>", repositioniere_panda)
+        widgets.append(panda_label)
+    except Exception as e:
+        print("Panda-Bild konnte nicht geladen werden:", e)
+
+    apply_theme(root, widgets)
+    aktualisiere_tabelle()
+    root.mainloop()
+
