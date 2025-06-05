@@ -56,4 +56,69 @@ def noten_exportieren():
             "Offen": PatternFill(start_color="D9D9D9", end_color="D9D9D9", fill_type="solid")
         }
 
-        
+        # Notendaten einfügen und einfärben
+        for zeile in daten:
+            try:
+                note = int(zeile[7])
+            except Exception:
+                note = None
+
+            # Status berechnen
+            if note is None:
+                status = "Offen"
+            elif note <= 3:
+                status = "Nicht gefährdet"
+            elif note == 4:
+                status = "Beobachten"
+            else:
+                status = "Gefährdet"
+
+            # Datum formatieren
+            try:
+                datum_obj = zeile[9]
+                datum = datum_obj.strftime("%d.%m.%Y")
+            except Exception:
+                datum = zeile[9]
+
+            # Neue Datenzeile einfügen
+            daten_zeile = [
+                zeile[0],  # Schüler
+                zeile[1],  # Geschlecht
+                zeile[2],  # Ort
+                zeile[3],  # Postleitzahl
+                zeile[4],  # Klasse
+                zeile[5],  # Eintrittsjahr
+                zeile[6],  # Fach
+                zeile[7],  # Note
+                zeile[8],  # Notenart
+                datum,     # Datum
+                zeile[10], # Lehrer
+                status     # Status
+            ]
+            ws.append(daten_zeile)
+
+            # Letzte Zeile abrufen
+            letzte_zeile = ws.max_row
+            # Farbfüllung je nach Status anwenden
+            for col in range(1, len(daten_zeile)+1):
+                zelle = ws.cell(row=letzte_zeile, column=col)
+                zelle.fill = farben[status]
+                zelle.border = border
+                zelle.alignment = Alignment(horizontal="center")
+
+        # Spaltenbreite automatisch anpassen
+        for col in ws.columns:
+            max_length = 0
+            column = col[0].column_letter
+            for cell in col:
+                if cell.value:
+                    max_length = max(max_length, len(str(cell.value)))
+            ws.column_dimensions[column].width = max_length + 2
+
+        # Datei speichern
+        wb.save(pfad)
+        messagebox.showinfo("Export erfolgreich", f"Excel-Datei wurde gespeichert:\n{pfad}")
+
+    except Exception as e:
+        # Fehlermeldung bei Problemen
+        messagebox.showerror("Fehler beim Exportieren", str(e))
