@@ -228,6 +228,32 @@ def loesche_note():
             conn.close()
             aktualisiere_tabelle()
 
+# Tabelle mit neuen Daten befüllen
+
+def aktualisiere_tabelle():
+    tabelle.delete(*tabelle.get_children())
+    daten = lade_noten()
+    for zeile in daten:
+        try:
+            note = int(zeile[7])
+        except Exception:
+            note = None
+
+        if note is None:
+            status = "🕒 Offen"
+            tag = ""
+        elif note <= 3:
+            status = "✅ Nicht gefährdet"
+            tag = "gruen"
+        elif note == 4:
+            status = "⚠️ Beobachten"
+            tag = "gelb"
+        else:
+            status = "❌ Gefährdet"
+            tag = "rot"
+
+        zeile_liste = list(zeile)
+        tabelle.insert("", "end", values=zeile_liste[:11] + [status], tags=(tag,))
 
 
  
