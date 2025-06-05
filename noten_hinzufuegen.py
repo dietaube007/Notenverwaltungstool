@@ -119,3 +119,52 @@ def noten_hinzufuegen_dialog(root, aktualisiere_tabelle, apply_theme):
     datum_entry.grid(row=5, column=1, pady=5)
     widgets.extend([datum_label, datum_entry])
 
+    # Wenn sich die Klasse ändert, lade passende Schüler und Fächer
+    def on_klasse_change(*args):
+        klasse = vars["klasse"].get()
+        if klasse not in klassen_map:
+            return
+        k_id = klassen_map[klasse]
+        vars["schueler"].set("")
+        vars["fach"].set("")
+        schueler_combo["values"] = []
+        fach_combo["values"] = []
+
+        s_data = get_schueler_fuer_klasse(k_id)
+        schueler_map.clear()
+        schueler_map.update({f"{name}": sid for sid, name in s_data})
+        schueler_combo.config(values=list(schueler_map.keys()))
+
+        f_data = get_faecher_fuer_lehrer_und_klasse(k_id)
+        fach_map.clear()
+        fach_map.update({name: fid for name, fid in f_data})
+        fach_combo.config(values=list(fach_map.keys()))
+
+    vars["klasse"].trace_add("write", on_klasse_change)
+
+    # Funktion zum Speichern des Eintrags
+    def speichern():
+        sid = schueler_map.get(vars["schueler"].get())
+        fid = fach_map.get(vars["fach"].get())
+        tid = typ_map.get(vars["notentyp"].get())
+        nwid = wert_map.get(vars["notenwert"].get())
+        datum = datum_entry.get()
+
+        # Überprüfung, ob alle Felder korrekt ausgefüllt wurden
+        if not all([sid, fid, tid, nwid, datum]):
+            messagebox.showerror("Fehler", "Alle Felder korrekt ausfüllen.")
+            return
+
+        # Note speichern
+        note_hinzufuegen(sid, fid, tid, datum, nwid)
+        aktualisiere_tabelle()
+        win.destroy()
+
+    speichern_btn = tk.Button(win, text="💾 Speichern", command=speichern,
+                               font=("Segoe UI", 12, "bold"),
+                               bg="#81d4fa", fg="black")
+    speichern_btn.grid(row=6, column=0, columnspan=2, pady=20)
+    widgets.append(speichern_btn)
+
+    # Wendet das aktuelle Design auf alle Widgets im Fenster an
+    apply_theme(win, widgets)
