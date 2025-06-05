@@ -101,3 +101,63 @@ def zeige_login():
     login_win.mainloop()
 
 
+# Haupt-Dashboard starten
+def starte_gui():
+    global root, tabelle
+    root = tk.Tk()
+    root.title("🏫 Notenheld – Lehrer Dashboard")
+    root.geometry("1400x600")
+    root.resizable(True, True)
+    widgets = []
+
+    toggle_text = tk.StringVar(value="🌙 Dunkel")
+
+    # Begrüßung
+    begruessung = tk.Label(root, text=f"Hallo beim Notenheld {auth.lehrer_vorname} ", font=("Segoe UI", 18, "bold"))
+    begruessung.pack(pady=10)
+    widgets.append(begruessung)
+
+
+    # Abmelden-Button
+    def abmelden():
+        global root
+        if messagebox.askyesno("Abmelden", "Willst du dich wirklich abmelden?"):
+            root.destroy()
+            zeige_login()
+
+    abmelde_btn = tk.Button(root, text="🚪 Abmelden", font=("Segoe UI", 12, "bold"),
+                            command=abmelden, bg=colors["light"]["abmelden"], fg=colors["light"]["abmelden_fg"])
+    abmelde_btn.pack(pady=5)
+    widgets.append(abmelde_btn)
+
+
+    # Funktionsbuttons
+    frame = tk.Frame(root)
+    frame.pack(pady=10)
+    widgets.append(frame)
+
+    tk.Button(frame, text="➕ Note hinzufügen", font=("Segoe UI", 12, "bold"),
+              command=lambda: noten_hinzufuegen_dialog(root, aktualisiere_tabelle, apply_theme),
+              bg=colors["light"]["btn"], fg=colors["light"]["btn_fg"]).pack(side=tk.LEFT, padx=10)
+
+    tk.Button(frame, text="✏️ Note bearbeiten", font=("Segoe UI", 12, "bold"),
+              command=lambda: note_bearbeiten(tabelle, root, aktualisiere_tabelle, apply_theme),
+              bg=colors["light"]["btn"], fg=colors["light"]["btn_fg"]).pack(side=tk.LEFT, padx=10)
+
+    tk.Button(frame, text="🗑️ Note löschen", font=("Segoe UI", 12, "bold"),
+              command=loesche_note,
+              bg=colors["light"]["btn"], fg=colors["light"]["btn_fg"]).pack(side=tk.LEFT, padx=10)
+
+    tk.Button(frame, text="📤 Exportieren", font=("Segoe UI", 12, "bold"),
+              command=noten_exportieren,
+              bg=colors["light"]["btn"], fg=colors["light"]["btn_fg"]).pack(side=tk.LEFT, padx=10)
+
+    # Darkmode-Toggle auch im Dashboard
+    toggle_btn = tk.Button(frame, textvariable=toggle_text,
+                           command=lambda: toggle_darkmode(root, widgets, toggle_text),
+                           font=("Segoe UI", 12))
+    toggle_btn.pack(side=tk.RIGHT, padx=10)
+    widgets.append(toggle_btn)
+
+
+    
