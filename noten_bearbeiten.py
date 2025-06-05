@@ -97,3 +97,49 @@ def note_bearbeiten(tabelle, root, aktualisiere_tabelle, apply_theme):
 
     datum_entry.pack(side=tk.LEFT)
     widgets.extend([frame3, datum_entry])
+
+    # Funktion zum Speichern der Änderungen in der Datenbank
+    def speichern():
+        try:
+            datum_neu = datum_entry.get_date()
+        except Exception:
+            messagebox.showerror("Fehler", "Ungültiges Datum.")
+            return
+
+        if datum_neu > date.today():
+            messagebox.showerror("Ungültiges Datum", "❌ Sie können kein Datum aus der Zukunft wählen.")
+            return
+
+        typ_id = typ_map.get(typ_var.get())
+        wert_id = wert_map.get(wert_var.get())
+
+        if not (typ_id and wert_id):
+            messagebox.showerror("Fehler", "Bitte wählen Sie einen gültigen Notentyp und Notenwert.")
+            return
+
+        # Datenbankverbindung öffnen und Update durchführen
+        try:
+            conn = verbinde_db()
+            cur = conn.cursor()
+            cur.execute("""
+                UPDATE noten
+                SET notentypID = ?, datum = ?, noten_wertID = ?
+                WHERE schuelerID = ? AND fachID = ? AND notentypID = ? AND datum = ?
+            """, (
+                typ_id, datum_neu, wert_id,
+                original[12], original[13], original[14], original[15]
+            ))
+            conn.commit()
+            conn.close()
+            win.destroy()
+            aktualisiere_tabelle()
+        except Exception as e:
+            messagebox.showerror("Fehler beim Speichern", str(e))
+
+    # Speichern-Button
+    speichern_btn = tk.Button(win, text="💾 Speichern", font=("Segoe UI", 12, "bold"), command=speichern)
+    speichern_btn.pack(pady=20)
+    widgets.append(speichern_btn)
+
+    # Aktuelles Farbschema (hell/dunkel) anwenden
+    apply_theme(win, widgets)
