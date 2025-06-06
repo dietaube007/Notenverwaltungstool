@@ -1,15 +1,19 @@
 Um sich einzuloggen benötigt man die
+
+
 E-Mail: Vorname.Nachname@schule.de (Umlaute umschreiben zum Beispiel Mueller und nicht Müller)
+
+
 Passwort: Nachname (erster Buchstabe groß und Umlaute tatsächlich schreiben zum Beispiel: Müller und nicht Mueller)
 
 Lehrer Daten folgt
 
 Vorname
-Nachname
+Nachname (auch das Passwort)
 E-Mail
 
 
-1
+1.
 Thomas
 Müller
 thomas.mueller@schule.de
