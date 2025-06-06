@@ -186,7 +186,7 @@ def starte_gui():
 
     # Panda-Bild im Dashboard
     try:
-        panda_img = Image.open("panda.png").resize((180, 240), Image.LANCZOS)
+        panda_img = Image.open(resource_path("panda.png")).resize((180, 240), Image.LANCZOS)
         panda_tk = ImageTk.PhotoImage(panda_img)
         panda_label = tk.Label(root, image=panda_tk, bg=colors["light"]["panda_bg"])
         panda_label.image = panda_tk
