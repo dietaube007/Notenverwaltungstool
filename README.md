@@ -1,5 +1,7 @@
 Um sich einzuloggen benötigt man die
 
+die Datei ist die "Notenverwaltungstool.rar .exe Datei als ZIP Datei"
+
 
 E-Mail: Vorname.Nachname@schule.de (Umlaute umschreiben zum Beispiel Mueller und nicht Müller)
 
