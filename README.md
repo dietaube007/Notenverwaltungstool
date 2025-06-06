@@ -1,6 +1,9 @@
-Um sich einzuloggen benötigt man die
+Die Datei ist die "Notenverwaltungstool.rar" .exe Datei als ZIP Datei
 
-die Datei ist die "Notenverwaltungstool.rar .exe Datei als ZIP Datei"
+Da die datei zu groß ist.
+
+
+Um sich einzuloggen benötigt man die
 
 
 E-Mail: Vorname.Nachname@schule.de (Umlaute umschreiben zum Beispiel Mueller und nicht Müller)
