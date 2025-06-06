@@ -9,7 +9,7 @@ Nachname
 E-Mail
 
 
-1.
+1
 Thomas
 Müller
 thomas.mueller@schule.de
